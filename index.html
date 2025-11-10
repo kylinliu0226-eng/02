@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多式联运协同管理模块</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: linear-gradient(to bottom right, #f8fafc, #f1f5f9);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+        
+        h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        
+        h4 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        
+        p {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        
+        .subtitle {
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+        
+        /* Tabs */
+        .tabs {
+            margin-bottom: 1.5rem;
+        }
+        
+        .tabs-list {
+            display: inline-flex;
+            background: #f1f5f9;
+            padding: 0.25rem;
+            border-radius: 0.5rem;
+            gap: 0.25rem;
+        }
+        
+        .tab-trigger {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            cursor: pointer;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .tab-trigger:hover {
+            color: #0f172a;
+        }
+        
+        .tab-trigger.active {
+            background: white;
+            color: #0f172a;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Card */
+        .card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 0.25rem;
+        }
+        
+        .card-description {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        
+        .card-content {
+            padding: 1.5rem;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .stat-label {
+            color: #64748b;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        
+        /* Button */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+        
+        .btn-outline {
+            background: white;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+        
+        .btn-outline:hover {
+            background: #f9fafb;
+        }
+        
+        .btn-ghost {
+            background: transparent;
+            color: #374151;
+        }
+        
+        .btn-ghost:hover {
+            background: #f3f4f6;
+        }
+        
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.8125rem;
+        }
+        
+        /* Input */
+        .input {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+        
+        .input-with-icon {
+            padding-left: 2.5rem;
+        }
+        
+        /* Select */
+        .select {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            background: white;
+            cursor: pointer;
+        }
+        
+        /* Label */
+        .label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.625rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-outline {
+            border: 1px solid #d1d5db;
+            color: #374151;
+        }
+        
+        .badge-success {
+            background: #22c55e;
+            color: white;
+        }
+        
+        .badge-warning {
+            background: #eab308;
+            color: white;
+        }
+        
+        .badge-error {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .badge-info {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        /* Table */
+        .table-container {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        td {
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            color: #111827;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+        
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Filters */
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header Actions */
+        .header-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        @media (min-width: 1024px) {
+            .card-header-flex {
+                display: flex;
+                justify-content: space-between;
+                align-items: start;
+            }
+            
+            .header-actions {
+                margin-top: 0;
+            }
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            z-index: 50;
+        }
+        
+        .modal-overlay.hidden {
+            display: none;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 0.5rem;
+            max-width: 32rem;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .modal-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.25rem;
+        }
+        
+        .modal-description {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 0.5rem;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .upload-area:hover {
+            border-color: #9ca3af;
+        }
+        
+        .upload-icon {
+            width: 3rem;
+            height: 3rem;
+            margin: 0 auto 1rem;
+            color: #9ca3af;
+        }
+        
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 100;
+        }
+        
+        .toast {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #22c55e;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            min-width: 300px;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .toast-title {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.25rem;
+        }
+        
+        .toast-description {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+        
+        .toast.removing {
+            animation: slideOut 0.3s ease-out forwards;
+        }
+        
+        /* Info Panel */
+        .info-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .info-label {
+            color: #475569;
+        }
+        
+        .info-value {
+            font-weight: 600;
+            color: #0f172a;
+        }
+        
+        /* Insight Card */
+        .insight-card {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid;
+            margin-bottom: 1rem;
+        }
+        
+        .insight-card.error {
+            background: #fef2f2;
+            border-color: #ef4444;
+        }
+        
+        .insight-card.warning {
+            background: #fefce8;
+            border-color: #eab308;
+        }
+        
+        .insight-card.info {
+            background: #eff6ff;
+            border-color: #3b82f6;
+        }
+        
+        .insight-card.success {
+            background: #f0fdf4;
+            border-color: #22c55e;
+        }
+        
+        .insight-header {
+            display: flex;
+            align-items: start;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .insight-icon {
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+        
+        .insight-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .insight-content {
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .insight-list {
+            font-size: 0.875rem;
+        }
+        
+        .insight-list ul {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .insight-list li {
+            margin-bottom: 0.25rem;
+        }
+        
+        /* Chart */
+        .chart-container {
+            padding: 1rem 0;
+        }
+        
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .simple-chart {
+            height: 300px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            gap: 2rem;
+            padding: 2rem 1rem 3rem;
+            position: relative;
+        }
+        
+        .chart-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            max-width: 100px;
+        }
+        
+        .bar {
+            width: 100%;
+            background: linear-gradient(to top, #3b82f6, #60a5fa);
+            border-radius: 0.25rem 0.25rem 0 0;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .bar:hover {
+            opacity: 0.8;
+        }
+        
+        .bar-value {
+            position: absolute;
+            top: -1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        
+        .bar-label {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #64748b;
+            text-align: center;
+        }
+        
+        .pie-chart {
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+        }
+        
+        /* Rate Card */
+        .rate-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid;
+            margin-bottom: 1rem;
+        }
+        
+        .rate-card.high-risk {
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+        
+        .rate-card.low-risk {
+            background: #f0fdf4;
+            border-color: #bbf7d0;
+        }
+        
+        .rate-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .rate-content h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .rate-content p {
+            font-size: 0.875rem;
+        }
+        
+        .rate-value {
+            text-align: right;
+        }
+        
+        .rate-percentage {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .rate-status {
+            font-size: 0.875rem;
+        }
+        
+        .high-risk .rate-percentage,
+        .high-risk .rate-content h4 {
+            color: #dc2626;
+        }
+        
+        .high-risk .rate-content p,
+        .high-risk .rate-status {
+            color: #991b1b;
+        }
+        
+        .low-risk .rate-percentage,
+        .low-risk .rate-content h4 {
+            color: #16a34a;
+        }
+        
+        .low-risk .rate-content p,
+        .low-risk .rate-status {
+            color: #15803d;
+        }
+        
+        /* Icons */
+        .icon {
+            width: 1rem;
+            height: 1rem;
+            display: inline-block;
+        }
+        
+        .icon-lg {
+            width: 2rem;
+            height: 2rem;
+        }
+        
+        /* Utility */
+        .hidden {
+            display: none !important;
+        }
+        
+        .text-green {
+            color: #16a34a;
+        }
+        
+        .text-yellow {
+            color: #ca8a04;
+        }
+        
+        .text-red {
+            color: #dc2626;
+        }
+        
+        .text-blue {
+            color: #2563eb;
+        }
+        
+        .space-y-1 > * + * {
+            margin-top: 0.25rem;
+        }
+        
+        .space-y-2 > * + * {
+            margin-top: 0.5rem;
+        }
+        
+        .space-y-4 > * + * {
+            margin-top: 1rem;
+        }
+        
+        .space-y-6 > * + * {
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div style="margin-bottom: 2rem;">
+            <h1>多式联运协同管理模块</h1>
+            <p class="subtitle">企业级物流协同管理系统 - 大型客户专享功能</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tabs-list">
+                <button class="tab-trigger active" data-tab="mapping">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m17 2 4 4-4 4"></path>
+                        <path d="M3 11v-1a4 4 0 0 1 4-4h14"></path>
+                        <path d="m7 22-4-4 4-4"></path>
+                        <path d="M21 13v1a4 4 0 0 1-4 4H3"></path>
+                    </svg>
+                    单据自动映射
+                </button>
+                <button class="tab-trigger" data-tab="tracking">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    电子单据交接追踪
+                </button>
+                <button class="tab-trigger" data-tab="anomaly">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    异常日志查询
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Contents -->
+        
+        <!-- Mapping Tab -->
+        <div id="tab-mapping" class="tab-content active">
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">总映射规则</div>
+                    <div class="stat-value">128</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">今日同步</div>
+                    <div class="stat-value text-green">45</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">待处理</div>
+                    <div class="stat-value text-yellow">8</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">同步失败</div>
+                    <div class="stat-value text-red">3</div>
+                </div>
+            </div>
+
+            <!-- Main Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-flex">
+                        <div>
+                            <div class="card-title">单据自动映射</div>
+                            <p class="card-description">对接企业 ERP/SAP 系统，同步客户内部单号和成本中心</p>
+                        </div>
+                        <div class="header-actions">
+                            <button class="btn btn-outline" onclick="showToast('ERP 同步已启动！', '正在同步客户内部单号和成本中心数据...')">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                同步 ERP
+                            </button>
+                            <button class="btn btn-outline" onclick="showUploadModal()">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                批量上传
+                            </button>
+                            <button class="btn btn-outline" onclick="showToast('模板导出成功！', '映射规则模板已下载到本地。')">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                导出模板
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <!-- Filters -->
+                    <div class="filters">
+                        <div class="filter-group">
+                            <div class="input-wrapper">
+                                <svg class="icon input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <path d="m21 21-4.35-4.35"></path>
+                                </svg>
+                                <input type="text" class="input input-with-icon" placeholder="搜索单号或成本中心..." id="mapping-search">
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <select class="select" id="mapping-route">
+                                <option value="all">全部线路</option>
+                                <option value="亚欧线">亚欧线</option>
+                                <option value="中美线">中美线</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <select class="select" id="mapping-status">
+                                <option value="all">全部状态</option>
+                                <option value="completed">已完成</option>
+                                <option value="pending">待处理</option>
+                                <option value="failed">失败</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>映射ID</th>
+                                    <th>客户内部单号</th>
+                                    <th>成本中心</th>
+                                    <th>线路</th>
+                                    <th>ERP系统</th>
+                                    <th>同步时间</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mapping-table-body">
+                                <!-- Will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tracking Tab -->
+        <div id="tab-tracking" class="tab-content">
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">总交接记录</div>
+                    <div class="stat-value">6</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">已完成</div>
+                    <div class="stat-value text-green">3</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">运输中</div>
+                    <div class="stat-value text-blue">2</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">待交接</div>
+                    <div class="stat-value text-yellow">1</div>
+                </div>
+            </div>
+
+            <!-- Main Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-flex">
+                        <div>
+                            <div class="card-title">电子单据交接追踪</div>
+                            <p class="card-description">多账户/门店交接数据汇总，支持按线路和时间段筛选</p>
+                        </div>
+                        <div class="header-actions">
+                            <button class="btn btn-outline" onclick="showToast('汇总报告已生成！', '包含多账户/门店交接数据分析。')">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                生成报告
+                            </button>
+                            <button class="btn btn-primary" onclick="showToast('追踪报告生成成功！', 'PDF 格式报告已下载到本地。')">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                导出 PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <!-- Date Filters -->
+                    <div class="filters" style="background: #f9fafb; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                        <div class="filter-group">
+                            <label class="label">开始日期</label>
+                            <input type="date" class="input" value="2025-11-01">
+                        </div>
+                        <div class="filter-group">
+                            <label class="label">结束日期</label>
+                            <input type="date" class="input" value="2025-11-07">
+                        </div>
+                        <div class="filter-group">
+                            <label class="label">账户筛选</label>
+                            <select class="select">
+                                <option value="all">全部账户</option>
+                                <option value="总部账户">总部账户</option>
+                                <option value="分公司账户">分公司账户</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="label">线路筛选</label>
+                            <select class="select" id="tracking-route">
+                                <option value="all">全部线路</option>
+                                <option value="亚欧线">亚欧线</option>
+                                <option value="中美线">中美线</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="label">搜索</label>
+                            <input type="text" class="input" placeholder="单号/门店..." id="tracking-search">
+                        </div>
+                    </div>
+
+                    <!-- Info Panel -->
+                    <div class="info-panel">
+                        <div class="info-item">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path>
+                                <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path>
+                            </svg>
+                            <span class="info-label">覆盖门店：</span>
+                            <span class="info-value">6 家</span>
+                        </div>
+                        <div class="info-item">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                            </svg>
+                            <span class="info-label">筛选结果：</span>
+                            <span class="info-value" id="tracking-count">6 条记录</span>
+                        </div>
+                        <div class="info-item">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <span class="info-label">时间范围：</span>
+                            <span class="info-value">2025-11-01 至 2025-11-07</span>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>追踪ID</th>
+                                    <th>单据编号</th>
+                                    <th>账户</th>
+                                    <th>门店</th>
+                                    <th>线路</th>
+                                    <th>交接人</th>
+                                    <th>接收人</th>
+                                    <th>交接时间</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tracking-table-body">
+                                <!-- Will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Anomaly Tab -->
+        <div id="tab-anomaly" class="tab-content">
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">总异常记录</div>
+                    <div class="stat-value">156</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">已解决</div>
+                    <div class="stat-value text-green">98</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">处理中</div>
+                    <div class="stat-value text-blue">35</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">待处理</div>
+                    <div class="stat-value text-yellow">23</div>
+                </div>
+            </div>
+
+            <!-- Main Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-flex">
+                        <div>
+                            <div class="card-title">异常日志查询</div>
+                            <p class="card-description">全账户异常记录统计分析，支持按异常类型、线路、处理人筛选</p>
+                        </div>
+                        <div class="header-actions">
+                            <button class="btn btn-outline" onclick="showToast('异常归因报告已生成！', '包含改进建议和优化方案。')">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                                    <path d="M12 18v-4"></path>
+                                    <path d="M8 18v-2"></path>
+                                    <path d="M16 18v-6"></path>
+                                </svg>
+                                生成归因报告
+                            </button>
+                            <button class="btn btn-primary" onclick="showToast('数据导出成功！', '异常数据已导出至企业 BI 系统。')">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                导出至 BI
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <!-- Sub Tabs -->
+                    <div class="tabs" style="margin-bottom: 1.5rem;">
+                        <div class="tabs-list">
+                            <button class="tab-trigger active" data-subtab="list">异常列表</button>
+                            <button class="tab-trigger" data-subtab="statistics">统计分析</button>
+                            <button class="tab-trigger" data-subtab="insights">改进建议</button>
+                        </div>
+                    </div>
+
+                    <!-- List Sub Tab -->
+                    <div id="subtab-list" class="tab-content active">
+                        <!-- Filters -->
+                        <div class="filters">
+                            <div class="filter-group">
+                                <input type="text" class="input" placeholder="搜索单号或描述..." id="anomaly-search">
+                            </div>
+                            <div class="filter-group">
+                                <select class="select" id="anomaly-route">
+                                    <option value="all">全部线路</option>
+                                    <option value="亚欧线">亚欧线</option>
+                                    <option value="中美线">中美线</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <select class="select" id="anomaly-type">
+                                    <option value="all">全部类型</option>
+                                    <option value="单据缺失">单据缺失</option>
+                                    <option value="信息不匹配">信息不匹配</option>
+                                    <option value="延迟交接">延迟交接</option>
+                                    <option value="系统错误">系统错误</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <select class="select" id="anomaly-status">
+                                    <option value="all">全部状态</option>
+                                    <option value="resolved">已解决</option>
+                                    <option value="processing">处理中</option>
+                                    <option value="pending">待处理</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Table -->
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>异常ID</th>
+                                        <th>单据编号</th>
+                                        <th>异常类型</th>
+                                        <th>线路</th>
+                                        <th>处理人</th>
+                                        <th>报告时间</th>
+                                        <th>解决时间</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="anomaly-table-body">
+                                    <!-- Will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Sub Tab -->
+                    <div id="subtab-statistics" class="tab-content">
+                        <div class="space-y-6">
+                            <!-- Charts -->
+                            <div class="chart-grid">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3>线路异常统计</h3>
+                                        <p class="card-description">各线路异常数量与占比分析</p>
+                                    </div>
+                                    <div class="card-content">
+                                        <div class="simple-chart">
+                                            <div class="chart-bar">
+                                                <div class="bar" style="height: 150px;">
+                                                    <span class="bar-value">45</span>
+                                                </div>
+                                                <div class="bar-label">亚欧线<br>占比: 8%</div>
+                                            </div>
+                                            <div class="chart-bar">
+                                                <div class="bar" style="height: 250px; background: linear-gradient(to top, #f59e0b, #fbbf24);">
+                                                    <span class="bar-value">89</span>
+                                                </div>
+                                                <div class="bar-label">中美线<br>占比: 15%</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3>异常类型分布</h3>
+                                        <p class="card-description">各类型异常占比情况</p>
+                                    </div>
+                                    <div class="card-content">
+                                        <svg class="pie-chart" viewBox="0 0 200 200">
+                                            <!-- Pie slices -->
+                                            <circle cx="100" cy="100" r="80" fill="none" stroke="#ef4444" stroke-width="80" 
+                                                    stroke-dasharray="130.4 502.4" transform="rotate(-90 100 100)"/>
+                                            <circle cx="100" cy="100" r="80" fill="none" stroke="#f59e0b" stroke-width="80" 
+                                                    stroke-dasharray="95.2 502.4" stroke-dashoffset="-130.4" transform="rotate(-90 100 100)"/>
+                                            <circle cx="100" cy="100" r="80" fill="none" stroke="#3b82f6" stroke-width="80" 
+                                                    stroke-dasharray="77.6 502.4" stroke-dashoffset="-225.6" transform="rotate(-90 100 100)"/>
+                                            <circle cx="100" cy="100" r="80" fill="none" stroke="#8b5cf6" stroke-width="80" 
+                                                    stroke-dasharray="87.6 502.4" stroke-dashoffset="-303.2" transform="rotate(-90 100 100)"/>
+                                            
+                                            <!-- Labels -->
+                                            <text x="100" y="30" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="600">单据缺失: 52</text>
+                                            <text x="160" y="100" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="600">信息不匹配: 38</text>
+                                            <text x="100" y="170" text-anchor="middle" fill="#3b82f6" font-size="10" font-weight="600">延迟交接: 31</text>
+                                            <text x="40" y="100" text-anchor="middle" fill="#8b5cf6" font-size="10" font-weight="600">系统错误: 35</text>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Rate Analysis -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>异常率分析</h3>
+                                </div>
+                                <div class="card-content">
+                                    <div class="space-y-4">
+                                        <div class="rate-card high-risk">
+                                            <div class="rate-info">
+                                                <svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                                    <polyline points="17 6 23 6 23 12"></polyline>
+                                                </svg>
+                                                <div class="rate-content">
+                                                    <h4>中美线单据异常占比</h4>
+                                                    <p>需重点关注</p>
+                                                </div>
+                                            </div>
+                                            <div class="rate-value">
+                                                <div class="rate-percentage">15%</div>
+                                                <div class="rate-status">较高风险</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="rate-card low-risk">
+                                            <div class="rate-info">
+                                                <svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                                    <polyline points="17 6 23 6 23 12"></polyline>
+                                                </svg>
+                                                <div class="rate-content">
+                                                    <h4>亚欧线单据异常占比</h4>
+                                                    <p>表现良好</p>
+                                                </div>
+                                            </div>
+                                            <div class="rate-value">
+                                                <div class="rate-percentage">8%</div>
+                                                <div class="rate-status">低风险</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Insights Sub Tab -->
+                    <div id="subtab-insights" class="tab-content">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>异常归因分析与改进建议</h3>
+                                <p class="card-description">基于数据分析生成的优化方案</p>
+                            </div>
+                            <div class="card-content">
+                                <div class="space-y-4">
+                                    <!-- Error Insight -->
+                                    <div class="insight-card error">
+                                        <div class="insight-header">
+                                            <svg class="icon insight-icon" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+                                                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                            </svg>
+                                            <div style="flex: 1;">
+                                                <h4 class="insight-title" style="color: #991b1b;">中美线异常率偏高 (15%)</h4>
+                                                <p class="insight-content" style="color: #b91c1c;">主要原因：单据缺失 (58%)、系统同步延迟 (23%)</p>
+                                                <div class="insight-list" style="color: #b91c1c;">
+                                                    <p style="font-weight: 600; color: #991b1b;">改进建议：</p>
+                                                    <ul>
+                                                        <li>加强中美线 ERP 系统对接稳定性测试</li>
+                                                        <li>增加单据自动备份机制，设置每 4 小时同步检查点</li>
+                                                        <li>为中美线配置专职异常处理人员</li>
+                                                        <li>优化报关单据电子化流程，减少人工干预环节</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Warning Insight -->
+                                    <div class="insight-card warning">
+                                        <div class="insight-header">
+                                            <svg class="icon insight-icon" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2">
+                                                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                            </svg>
+                                            <div style="flex: 1;">
+                                                <h4 class="insight-title" style="color: #854d0e;">信息不匹配问题频发</h4>
+                                                <p class="insight-content" style="color: #a16207;">占总异常的 24%，平均解决时长 6.5 小时</p>
+                                                <div class="insight-list" style="color: #a16207;">
+                                                    <p style="font-weight: 600; color: #854d0e;">改进建议：</p>
+                                                    <ul>
+                                                        <li>实施智能数据校验规则，在录入阶段拦截不匹配信息</li>
+                                                        <li>建立标准化数据字典，统一各系统字段定义</li>
+                                                        <li>开发实时预警系统，检测到不匹配时立即通知相关人员</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Info Insight -->
+                                    <div class="insight-card info">
+                                        <div class="insight-header">
+                                            <svg class="icon insight-icon" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+                                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                                <polyline points="17 6 23 6 23 12"></polyline>
+                                            </svg>
+                                            <div style="flex: 1;">
+                                                <h4 class="insight-title" style="color: #1e40af;">系统优化建议</h4>
+                                                <p class="insight-content" style="color: #1e3a8a;">整体系统性能与流程改进方向</p>
+                                                <div class="insight-list" style="color: #1e3a8a;">
+                                                    <p style="font-weight: 600; color: #1e40af;">建议措施：</p>
+                                                    <ul>
+                                                        <li>部署 AI 异常预测模型，提前识别潜在风险单据</li>
+                                                        <li>建立异常处理知识库，加速问题解决速度</li>
+                                                        <li>实施月度异常复盘机制，持续优化流程</li>
+                                                        <li>增加与主要 ERP 系统的深度集成测试</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Success Insight -->
+                                    <div class="insight-card success">
+                                        <div class="insight-header">
+                                            <svg class="icon insight-icon" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2">
+                                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                                <polyline points="17 6 23 6 23 12"></polyline>
+                                            </svg>
+                                            <div style="flex: 1;">
+                                                <h4 class="insight-title" style="color: #15803d;">亚欧线表现优秀</h4>
+                                                <p class="insight-content" style="color: #166534;">异常率仅 8%，可作为最佳实践推广</p>
+                                                <div class="insight-list" style="color: #166534;">
+                                                    <p style="font-weight: 600; color: #15803d;">成功经验：</p>
+                                                    <ul>
+                                                        <li>完善的单据交接 SOP 流程</li>
+                                                        <li>高效的多方协同沟通机制</li>
+                                                        <li>稳定的系统对接和定期维护</li>
+                                                        <li>建议将亚欧线经验复制到中美线业务</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div id="upload-modal" class="modal-overlay hidden" onclick="closeUploadModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 class="modal-title">批量上传单据</h3>
+                <p class="modal-description">支持 Excel、CSV 格式，系统将自动匹配映射模板</p>
+            </div>
+            <div class="modal-body">
+                <div class="upload-area">
+                    <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <p style="color: #4b5563; margin-bottom: 0.5rem;">点击或拖拽文件到此处上传</p>
+                    <p style="color: #9ca3af; font-size: 0.875rem;">支持 .xlsx, .xls, .csv 格式</p>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <label class="label">选择映射规则</label>
+                    <select class="select">
+                        <option>亚欧线标准模板</option>
+                        <option>中美线标准模板</option>
+                        <option>自定义模板</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeUploadModal()">取消</button>
+                <button class="btn btn-primary" onclick="handleUpload()">确认上传</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script>
+        // Data
+        const mappingData = [
+            { id: 'MAP001', customerOrderNo: 'ORD-2025-11-001', costCenter: 'CC-ASIA-001', route: '亚欧线', erpSystem: 'SAP', status: 'completed', syncTime: '2025-11-07 10:30:25' },
+            { id: 'MAP002', customerOrderNo: 'ORD-2025-11-002', costCenter: 'CC-USA-002', route: '中美线', erpSystem: 'Oracle ERP', status: 'completed', syncTime: '2025-11-07 11:15:42' },
+            { id: 'MAP003', customerOrderNo: 'ORD-2025-11-003', costCenter: 'CC-ASIA-003', route: '亚欧线', erpSystem: 'SAP', status: 'pending', syncTime: '2025-11-07 12:00:00' },
+            { id: 'MAP004', customerOrderNo: 'ORD-2025-11-004', costCenter: 'CC-USA-004', route: '中美线', erpSystem: 'Microsoft Dynamics', status: 'failed', syncTime: '2025-11-07 13:20:15' },
+            { id: 'MAP005', customerOrderNo: 'ORD-2025-11-005', costCenter: 'CC-ASIA-005', route: '亚欧线', erpSystem: 'SAP', status: 'completed', syncTime: '2025-11-07 14:45:30' }
+        ];
+
+        const trackingData = [
+            { id: 'TRK001', documentNo: 'DOC-2025-001', account: '总部账户', store: '上海门店', route: '亚欧线', sender: '张伟', receiver: '李明', handoverTime: '2025-11-07 09:00:00', status: 'completed' },
+            { id: 'TRK002', documentNo: 'DOC-2025-002', account: '总部账户', store: '北京门店', route: '中美线', sender: '王芳', receiver: '赵强', handoverTime: '2025-11-07 10:30:00', status: 'in-transit' },
+            { id: 'TRK003', documentNo: 'DOC-2025-003', account: '分公司账户', store: '深圳门店', route: '亚欧线', sender: '刘洋', receiver: '陈静', handoverTime: '2025-11-07 11:45:00', status: 'completed' },
+            { id: 'TRK004', documentNo: 'DOC-2025-004', account: '总部账户', store: '广州门店', route: '中美线', sender: '周杰', receiver: '吴娜', handoverTime: '2025-11-07 13:20:00', status: 'pending' },
+            { id: 'TRK005', documentNo: 'DOC-2025-005', account: '分公司账户', store: '成都门店', route: '亚欧线', sender: '孙敏', receiver: '郑浩', handoverTime: '2025-11-07 14:00:00', status: 'in-transit' },
+            { id: 'TRK006', documentNo: 'DOC-2025-006', account: '总部账户', store: '杭州门店', route: '中美线', sender: '黄丽', receiver: '冯军', handoverTime: '2025-11-07 15:30:00', status: 'completed' }
+        ];
+
+        const anomalyData = [
+            { id: 'ANO001', documentNo: 'DOC-2025-001', anomalyType: '单据缺失', route: '亚欧线', handler: '张伟', reportTime: '2025-11-06 14:30:00', resolveTime: '2025-11-06 16:00:00', status: 'resolved' },
+            { id: 'ANO002', documentNo: 'DOC-2025-015', anomalyType: '信息不匹配', route: '中美线', handler: '李明', reportTime: '2025-11-07 09:15:00', resolveTime: '-', status: 'processing' },
+            { id: 'ANO003', documentNo: 'DOC-2025-032', anomalyType: '延迟交接', route: '亚欧线', handler: '王芳', reportTime: '2025-11-07 10:45:00', resolveTime: '-', status: 'pending' },
+            { id: 'ANO004', documentNo: 'DOC-2025-047', anomalyType: '单据缺失', route: '中美线', handler: '赵强', reportTime: '2025-11-07 11:20:00', resolveTime: '2025-11-07 13:30:00', status: 'resolved' },
+            { id: 'ANO005', documentNo: 'DOC-2025-058', anomalyType: '系统错误', route: '中美线', handler: '刘洋', reportTime: '2025-11-07 12:00:00', resolveTime: '-', status: 'processing' },
+            { id: 'ANO006', documentNo: 'DOC-2025-063', anomalyType: '信息不匹配', route: '亚欧线', handler: '陈静', reportTime: '2025-11-07 13:40:00', resolveTime: '-', status: 'pending' }
+        ];
+
+        // Helper Functions
+        function getStatusBadge(status) {
+            const badges = {
+                completed: '<span class="badge badge-success">已完成</span>',
+                pending: '<span class="badge badge-warning">待处理</span>',
+                failed: '<span class="badge badge-error">失败</span>',
+                'in-transit': '<span class="badge badge-info">运输中</span>',
+                resolved: '<span class="badge badge-success">已解决</span>',
+                processing: '<span class="badge badge-info">处理中</span>'
+            };
+            return badges[status] || status;
+        }
+
+        // Render Tables
+        function renderMappingTable(data = mappingData) {
+            const tbody = document.getElementById('mapping-table-body');
+            const search = document.getElementById('mapping-search').value.toLowerCase();
+            const route = document.getElementById('mapping-route').value;
+            const status = document.getElementById('mapping-status').value;
+
+            const filtered = data.filter(item => {
+                const matchSearch = item.customerOrderNo.toLowerCase().includes(search) || item.costCenter.toLowerCase().includes(search);
+                const matchRoute = route === 'all' || item.route === route;
+                const matchStatus = status === 'all' || item.status === status;
+                return matchSearch && matchRoute && matchStatus;
+            });
+
+            tbody.innerHTML = filtered.map(item => `
+                <tr>
+                    <td>${item.id}</td>
+                    <td>${item.customerOrderNo}</td>
+                    <td>${item.costCenter}</td>
+                    <td><span class="badge badge-outline">${item.route}</span></td>
+                    <td>${item.erpSystem}</td>
+                    <td>${item.syncTime}</td>
+                    <td>${getStatusBadge(item.status)}</td>
+                    <td><button class="btn btn-ghost btn-sm">详情</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderTrackingTable(data = trackingData) {
+            const tbody = document.getElementById('tracking-table-body');
+            const search = document.getElementById('tracking-search').value.toLowerCase();
+            const route = document.getElementById('tracking-route').value;
+
+            const filtered = data.filter(item => {
+                const matchSearch = item.documentNo.toLowerCase().includes(search) || item.store.toLowerCase().includes(search);
+                const matchRoute = route === 'all' || item.route === route;
+                return matchSearch && matchRoute;
+            });
+
+            document.getElementById('tracking-count').textContent = `${filtered.length} 条记录`;
+
+            tbody.innerHTML = filtered.map(item => `
+                <tr>
+                    <td>${item.id}</td>
+                    <td>${item.documentNo}</td>
+                    <td><span class="badge badge-outline">${item.account}</span></td>
+                    <td>${item.store}</td>
+                    <td><span class="badge badge-outline">${item.route}</span></td>
+                    <td>${item.sender}</td>
+                    <td>${item.receiver}</td>
+                    <td>${item.handoverTime}</td>
+                    <td>${getStatusBadge(item.status)}</td>
+                    <td><button class="btn btn-ghost btn-sm">追踪</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderAnomalyTable(data = anomalyData) {
+            const tbody = document.getElementById('anomaly-table-body');
+            const search = document.getElementById('anomaly-search').value.toLowerCase();
+            const route = document.getElementById('anomaly-route').value;
+            const type = document.getElementById('anomaly-type').value;
+            const status = document.getElementById('anomaly-status').value;
+
+            const filtered = data.filter(item => {
+                const matchSearch = item.documentNo.toLowerCase().includes(search);
+                const matchRoute = route === 'all' || item.route === route;
+                const matchType = type === 'all' || item.anomalyType === type;
+                const matchStatus = status === 'all' || item.status === status;
+                return matchSearch && matchRoute && matchType && matchStatus;
+            });
+
+            tbody.innerHTML = filtered.map(item => `
+                <tr>
+                    <td>${item.id}</td>
+                    <td>${item.documentNo}</td>
+                    <td><span class="badge badge-outline">${item.anomalyType}</span></td>
+                    <td><span class="badge badge-outline">${item.route}</span></td>
+                    <td>${item.handler}</td>
+                    <td>${item.reportTime}</td>
+                    <td>${item.resolveTime}</td>
+                    <td>${getStatusBadge(item.status)}</td>
+                    <td><button class="btn btn-ghost btn-sm">详情</button></td>
+                </tr>
+            `).join('');
+        }
+
+        // Tab Switching
+        document.querySelectorAll('.tab-trigger').forEach(trigger => {
+            trigger.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                const subtabName = this.getAttribute('data-subtab');
+                
+                if (tabName) {
+                    // Main tabs
+                    document.querySelectorAll('.tab-trigger').forEach(t => {
+                        if (!t.getAttribute('data-subtab')) t.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        if (content.id.startsWith('tab-')) content.classList.remove('active');
+                    });
+                    document.getElementById(`tab-${tabName}`).classList.add('active');
+                }
+                
+                if (subtabName) {
+                    // Sub tabs
+                    const parent = this.closest('.tabs');
+                    parent.querySelectorAll('.tab-trigger').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    document.querySelectorAll('[id^="subtab-"]').forEach(content => content.classList.remove('active'));
+                    document.getElementById(`subtab-${subtabName}`).classList.add('active');
+                }
+            });
+        });
+
+        // Filter Events
+        document.getElementById('mapping-search').addEventListener('input', () => renderMappingTable());
+        document.getElementById('mapping-route').addEventListener('change', () => renderMappingTable());
+        document.getElementById('mapping-status').addEventListener('change', () => renderMappingTable());
+        
+        document.getElementById('tracking-search').addEventListener('input', () => renderTrackingTable());
+        document.getElementById('tracking-route').addEventListener('change', () => renderTrackingTable());
+        
+        document.getElementById('anomaly-search').addEventListener('input', () => renderAnomalyTable());
+        document.getElementById('anomaly-route').addEventListener('change', () => renderAnomalyTable());
+        document.getElementById('anomaly-type').addEventListener('change', () => renderAnomalyTable());
+        document.getElementById('anomaly-status').addEventListener('change', () => renderAnomalyTable());
+
+        // Modal Functions
+        function showUploadModal() {
+            document.getElementById('upload-modal').classList.remove('hidden');
+        }
+
+        function closeUploadModal() {
+            document.getElementById('upload-modal').classList.add('hidden');
+        }
+
+        function handleUpload() {
+            showToast('批量单据上传成功！', '已成功导入 15 条单据记录，自动匹配模板完成。');
+            closeUploadModal();
+        }
+
+        // Toast Function
+        function showToast(title, description) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `
+                <div class="toast-title">${title}</div>
+                <div class="toast-description">${description}</div>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('removing');
+                setTimeout(() => {
+                    container.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        // Initialize
+        renderMappingTable();
+        renderTrackingTable();
+        renderAnomalyTable();
+    </script>
+</body>
+</html>
